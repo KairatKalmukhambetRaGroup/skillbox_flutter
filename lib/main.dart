@@ -37,7 +37,8 @@ class _MyHomePageState extends State<MyHomePage> {
   List<String> uriNames = [
     'https://cdn.worldvectorlogo.com/logos/flutter.svg',
     'https://upload.wikimedia.org/wikipedia/commons/f/fe/Dart_programming_language_logo.svg',
-    'https://upload.wikimedia.org/wikipedia/commons/9/95/Android_Studio_Icon_3.6.svg'
+    'https://upload.wikimedia.org/wikipedia/commons/9/95/Android_Studio_Icon_3.6.svg',
+    'assets/svg/skillbox_logo.svg'
   ];
 
   @override
@@ -54,19 +55,28 @@ class _MyHomePageState extends State<MyHomePage> {
             CarouselSlider(
               options: CarouselOptions(height: 400.0),
               items: uriNames.map((uriName) {
+                SvgPicture svgPicture;
+                if (Uri.parse(uriName).isAbsolute) {
+                  svgPicture = SvgPicture.network(
+                    uriName,
+                    placeholderBuilder: (BuildContext context) => Container(
+                        padding: const EdgeInsets.all(50.0),
+                        child: const CircularProgressIndicator()),
+                  );
+                } else {
+                  svgPicture = SvgPicture.asset(
+                    uriName,
+                    placeholderBuilder: (BuildContext context) => Container(
+                        padding: const EdgeInsets.all(50.0),
+                        child: const CircularProgressIndicator()),
+                  );
+                }
                 return Builder(
                   builder: (BuildContext context) {
                     return Container(
                         width: MediaQuery.of(context).size.width,
                         margin: const EdgeInsets.symmetric(horizontal: 40.0),
-                        child: SvgPicture.network(
-                          uriName,
-                          semanticsLabel: 'A shark?!',
-                          placeholderBuilder: (BuildContext context) =>
-                              Container(
-                                  padding: const EdgeInsets.all(50.0),
-                                  child: const CircularProgressIndicator()),
-                        ));
+                        child: svgPicture);
                   },
                 );
               }).toList(),
